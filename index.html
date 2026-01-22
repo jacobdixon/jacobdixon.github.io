@@ -3,131 +3,176 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jacob Dixon - Resume</title>
+    <title>Jacob Dixon - Product Leader</title>
     <style>
+        /* --- RESET & VARIABLES --- */
         :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #34495e;
-            --accent-color: #3498db;
-            --text-color: #333;
-            --light-bg: #f4f4f9;
+            --primary: #2c3e50;       /* Dark Blue/Gray */
+            --accent: #3498db;        /* Bright Blue */
+            --text-dark: #333333;
+            --text-light: #666666;
+            --bg-body: #f4f4f9;
+            --bg-card: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
         }
 
         body {
             font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
             line-height: 1.6;
-            color: var(--text-color);
+            color: var(--text-dark);
             margin: 0;
             padding: 0;
-            background-color: var(--light-bg);
+            background-color: var(--bg-body);
         }
 
+        /* --- LAYOUT --- */
         .container {
             max-width: 900px;
             margin: 40px auto;
-            background: #fff;
-            padding: 40px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            background: var(--bg-card);
+            padding: 50px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border-radius: 8px;
         }
 
-        /* Header */
+        /* --- HEADER --- */
         header {
-            border-bottom: 2px solid var(--accent-color);
-            padding-bottom: 20px;
-            margin-bottom: 30px;
+            border-bottom: 3px solid var(--accent);
+            padding-bottom: 25px;
+            margin-bottom: 40px;
         }
 
         h1 {
-            color: var(--primary-color);
-            margin: 0 0 10px 0;
-            font-size: 2.5em;
+            color: var(--primary);
+            margin: 0 0 15px 0;
+            font-size: 2.8em;
+            letter-spacing: -1px;
         }
 
         .contact-info {
-            font-size: 0.9em;
-            color: var(--secondary-color);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            font-size: 1rem;
+            color: var(--text-light);
         }
 
         .contact-info a {
-            color: var(--accent-color);
+            color: var(--accent);
             text-decoration: none;
-            margin-right: 15px;
+            font-weight: 600;
         }
 
-        /* Sections */
+        /* --- SECTIONS --- */
         section {
-            margin-bottom: 30px;
+            margin-bottom: 50px;
         }
 
         h2 {
-            color: var(--primary-color);
+            color: var(--primary);
             border-bottom: 1px solid #eee;
-            padding-bottom: 5px;
+            padding-bottom: 10px;
             margin-top: 0;
+            margin-bottom: 25px;
             text-transform: uppercase;
             font-size: 1.2em;
             letter-spacing: 1px;
         }
 
-        /* Experience Items */
+        /* --- EXPERIENCE JOBS --- */
         .job {
-            margin-bottom: 20px;
+            margin-bottom: 30px;
         }
 
         .job-header {
             display: flex;
             justify-content: space-between;
             align-items: baseline;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
         }
 
         .job-title {
-            font-weight: bold;
-            font-size: 1.1em;
-            color: var(--primary-color);
+            font-weight: 700;
+            font-size: 1.15em;
+            color: var(--primary);
         }
 
-        .company {
+        .company-group {
             font-style: italic;
-            color: var(--secondary-color);
+            color: var(--text-light);
         }
 
         .date {
-            color: #777;
+            color: var(--text-light);
             font-size: 0.9em;
+            font-weight: 500;
             white-space: nowrap;
         }
 
         ul {
-            margin-top: 5px;
+            margin-top: 8px;
             padding-left: 20px;
+            color: var(--text-dark);
         }
 
         li {
-            margin-bottom: 5px;
+            margin-bottom: 6px;
         }
 
-        /* Skills Grid */
+        /* --- SKILLS GRID --- */
         .skills-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 10px;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .skill-box {
+            background: #fcfcfc;
+            border: 1px solid #eee;
+            padding: 15px;
+            border-radius: 6px;
         }
 
         .skill-category {
-            font-weight: bold;
-            margin-top: 10px;
             display: block;
-            color: var(--secondary-color);
+            font-weight: bold;
+            color: var(--accent);
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            font-size: 0.85em;
         }
 
-        @media (max-width: 600px) {
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 768px) {
             .container {
                 margin: 0;
-                padding: 20px;
+                padding: 25px;
+                width: 100%;
+                border-radius: 0;
+                box-shadow: none;
             }
+
+            h1 {
+                font-size: 2em;
+            }
+
             .job-header {
                 flex-direction: column;
+                gap: 4px;
+            }
+
+            .date {
+                font-size: 0.85em;
+                color: #888;
+                margin-bottom: 5px;
+            }
+            
+            .contact-info {
+                flex-direction: column;
+                gap: 8px;
             }
         }
     </style>
@@ -136,19 +181,175 @@
 
 <div class="container">
     <header>
-        <h1>Jacob Dixon</h1> <div class="contact-info">
-            <span>jacob.dixon@gmail.com</span> <span>|</span>
-            <span>608.957.1300</span> <span>|</span>
-            <a href="https://linkedin.com/in/jacobdixonux">linkedin.com/in/jacobdixonux</a> </div>
+        <h1>Jacob Dixon</h1>
+        <div class="contact-info">
+            <a href="mailto:jacob.dixon@gmail.com">jacob.dixon@gmail.com</a>
+            <span>•</span>
+            <a href="tel:6089571300">608.957.1300</a>
+            <span>•</span>
+            <a href="https://linkedin.com/in/jacobdixonux">linkedin.com/in/jacobdixonux</a>
+        </div>
     </header>
 
     <section id="summary">
         <h2>Professional Profile</h2>
         <p>
-            A seasoned executive with over 20 years of experience in product lifecycle management. Directed and led ideation, design, development, testing, launch and management of 15+ new-to-market products, serving 500k+ users and generating $500m+ in revenue. Proven track record of establishing and scaling software-as-a-service product organizations and achieving successful exits through strategic partnerships and innovative product development. Adept at leading cross-functional teams, optimizing business processes, and driving strategic initiatives to achieve overarching business objectives. </p>
+            A seasoned executive with over 20 years of experience in product lifecycle management.
+            Directed and led ideation, design, development, testing, launch and management of 15+ new-to-market products, serving 500k+ users and generating $500m+ in revenue.
+            Proven track record of establishing and scaling software-as-a-service product organizations and achieving successful exits through strategic partnerships and innovative product development.
+        </p>
     </section>
 
     <section id="experience">
         <h2>Experience</h2>
 
         <div class="job">
+            <div class="job-header">
+                <span class="job-title">Director, UX, Front Office</span>
+                <span class="date">Oct 2022 – Present</span>
+            </div>
+            <div class="company-group">RealPage | Seattle, WA</div>
+            <ul>
+                <li>Directed product development team to dozens of feature additions and improvements backed directly by user research conducted with marketing executives, property managers, and leasing agents.</li>
+                <li>Expanded scope from CRM to front office adding designers from marketing and leasing to the team to broaden platform knowledge.</li>
+                <li>Led customer engagement and discovery through Knock advisory board workshop, beta feedback programs, and centralized user group sessions.</li>
+            </ul>
+        </div>
+
+        <div class="job">
+            <div class="job-header">
+                <span class="job-title">Director, UX</span>
+                <span class="date">Oct 2021 – Oct 2022</span>
+            </div>
+            <div class="company-group">Knock (Acquired by RealPage) | Seattle, WA</div>
+            <ul>
+                <li>First UX Director at Knock; hired 4 designers to create the UX team.</li>
+                <li>Worked closely with product, marketing, and customers to create first voice virtual agent.</li>
+                <li>Conducted over 50 user interviews, created persona library and journey maps.</li>
+                <li>Led value proposition canvas workshops for product management team.</li>
+            </ul>
+        </div>
+
+        <div class="job">
+            <div class="job-header">
+                <span class="job-title">Senior Design Manager</span>
+                <span class="date">Jan 2020 – Oct 2021</span>
+            </div>
+            <div class="company-group">Avalara | Seattle, WA</div>
+            <ul>
+                <li>Led a team of designers, writers, and strategists to redesign avalara.com against a research-backed buyer journey.</li>
+                <li>Established testing program to optimize web funnels for conversion rates.</li>
+                <li>Awarded marketing team "Trailblazer" award for 2020.</li>
+            </ul>
+        </div>
+
+        <div class="job">
+            <div class="job-header">
+                <span class="job-title">Senior Design Manager</span>
+                <span class="date">Mar 2019 – Dec 2019</span>
+            </div>
+            <div class="company-group">Change Healthcare | Seattle, WA</div>
+            <ul>
+                <li>Created product design team from existing staff of product analysts and managers.</li>
+                <li>Delivered first version of an enterprise-wide medical image viewer to market.</li>
+                <li>Led agile product development transformation to improve requirement quality.</li>
+            </ul>
+        </div>
+
+        <div class="job">
+            <div class="job-header">
+                <span class="job-title">Director, UX</span>
+                <span class="date">Sep 2014 – Mar 2019</span>
+            </div>
+            <div class="company-group">Providence Health & Services | Seattle, WA</div>
+            <ul>
+                <li>Served as first product owner for Health Connect mobile app (10k+ MAUs within 6 months).</li>
+                <li>Led design & development of e-commerce platform serving 200k users.</li>
+                <li>Established first-ever UX department for Providence Health & Services.</li>
+            </ul>
+        </div>
+
+        <div class="job">
+            <div class="job-header">
+                <span class="job-title">Director, UX & QA</span>
+                <span class="date">Jan 2011 – Sep 2014</span>
+            </div>
+            <div class="company-group">Wolters Kluwer | Madison, WI</div>
+            <ul>
+                <li>Created UX Research team, developed processes, built research library to 300+ interviews.</li>
+                <li>Delivered quarterly feature improvements pushing Sentri7 to be rated highest overall by KLAS.</li>
+                <li>Reduced defects by 66-75% through improved QA processes.</li>
+            </ul>
+        </div>
+
+        <div class="job">
+            <div class="job-header">
+                <span class="job-title">Director, UX</span>
+                <span class="date">Aug 2008 – Jan 2011</span>
+            </div>
+            <div class="company-group">Pharmacy OneSource | Madison, WI</div>
+            <ul>
+                <li>Established first UX team, created interaction designer role and first UX team hire.</li>
+                <li>Transformed product development team processes to agile & user stories.</li>
+                <li>Launched VeriForm, Simplifi797, and Accupedia.</li>
+            </ul>
+        </div>
+    </section>
+
+    <section id="skills">
+        <h2>Expertise & Skills</h2>
+        <div class="skills-grid">
+            <div class="skill-box">
+                <span class="skill-category">Strategy</span>
+                Business Model Canvas, Value Proposition Canvas, Roadmapping, Market Analysis
+            </div>
+            <div class="skill-box">
+                <span class="skill-category">Methodology</span>
+                Human-Centered Design, Design Thinking, Agile, Lean Innovation, Design Sprints
+            </div>
+            <div class="skill-box">
+                <span class="skill-category">Research</span>
+                User Interviews, Ethnography, Usability Studies, A/B Testing, Concept Testing
+            </div>
+            <div class="skill-box">
+                <span class="skill-category">Design</span>
+                Wireframing, Interaction Design, Info Architecture, Experience Mapping
+            </div>
+            <div class="skill-box">
+                <span class="skill-category">Management</span>
+                Talent Management, Org Development, Change Management, Release Management
+            </div>
+        </div>
+    </section>
+
+    <section id="education">
+        <h2>Education & Development</h2>
+        <div class="job">
+            <div class="job-header">
+                <span class="job-title">University of Wisconsin-Madison</span>
+            </div>
+            <ul>
+                <li>Bachelor of Science, Philosophy</li>
+                <li>Certificate, Computer Science</li>
+                <li>Certificate, Integrated Liberal Studies</li>
+            </ul>
+        </div>
+        
+        <div class="job">
+            <div class="job-header">
+                <span class="job-title">Professional Development</span>
+            </div>
+            <p>
+                Lean Innovation (Moves the Needle) • Leadership Essentials (Providence) • Leadership Development (Wolters Kluwer) • Pragmatic Marketing IV • Design Thinking (IDEO) • UX Intensive (Adaptive Path) • Usability (Nielsen/Norman) • Presenting Data (Edward Tufte)
+            </p>
+        </div>
+    </section>
+
+    <footer>
+        <p style="text-align:center; font-size:0.85em; color:#999; margin-top:60px;">
+            &copy; 2026 Jacob Dixon
+        </p>
+    </footer>
+
+</div> </body>
+</html>
