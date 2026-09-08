@@ -1,200 +1,329 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jacob Dixon</title>
-    <meta name="description" content="Jacob Dixon — product and design leader in Seattle.">
-    <style>
-        :root {
-            --primary: #2c3e50;
-            --accent: #3498db;
-            --text-dark: #333333;
-            --text-light: #666666;
-            --bg-body: #f4f4f9;
-            --bg-card: #ffffff;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jacob Dixon</title>
+<meta name="description" content="Jacob Dixon — product and design leader in Seattle. Director of UX at RealPage.">
+<meta name="theme-color" content="#0B0C0E">
+<meta property="og:title" content="Jacob Dixon">
+<meta property="og:description" content="Product and design leader in Seattle. Director of UX at RealPage.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jacobdixon.me/">
+<meta property="og:image" content="https://jacobdixon.me/img/hero-wide-sm.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://jacobdixon.me/">
+<link rel="preload" href="fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+  /* Archivo — SIL Open Font License 1.1, self-hosted latin subset (variable wdth 75–125, wght 400–900). */
+  @font-face{
+    font-family:'Archivo';
+    font-style:normal;
+    font-weight:400 900;
+    font-stretch:75% 125%;
+    font-display:swap;
+    src:url('fonts/archivo-latin.woff2') format('woff2');
+    unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+  }
 
-        * { box-sizing: border-box; }
+  :root{
+    --ink:#0B0C0E;
+    --line:#26292E;
+    --line-soft:#1C1F24;
+    --paper:#F4F2EE;
+    --paper-dim:#DFDCD6;
+    --muted:#9BA1A8;
+    --accent:#D9333F;   /* lifted from the crimson of his glasses */
+    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    --sans: "Archivo", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    --gut: clamp(20px, 5vw, 72px);
+    --maxw: 1180px;
+  }
 
-        body {
-            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-            line-height: 1.6;
-            color: var(--text-dark);
-            margin: 0;
-            padding: 0;
-            background-color: var(--bg-body);
-        }
+  *,*::before,*::after{ box-sizing:border-box; }
+  html{ -webkit-text-size-adjust:100%; scroll-behavior:smooth; }
 
-        .container {
-            max-width: 900px;
-            margin: 40px auto;
-            background: var(--bg-card);
-            padding: 50px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            border-radius: 8px;
-        }
+  body{
+    margin:0;
+    background:var(--ink);
+    color:var(--paper);
+    font-family:var(--sans);
+    font-size:17px;
+    line-height:1.6;
+    font-synthesis:none;
+    -webkit-font-smoothing:antialiased;
+  }
 
-        header {
-            border-bottom: 3px solid var(--accent);
-            padding-bottom: 25px;
-            margin-bottom: 40px;
-        }
+  a{ color:inherit; }
+  ::selection{ background:var(--accent); color:#fff; }
 
-        h1 {
-            color: var(--primary);
-            margin: 0 0 15px 0;
-            font-size: 2.8em;
-            letter-spacing: -1px;
-        }
+  :focus-visible{ outline:2px solid var(--accent); outline-offset:4px; border-radius:2px; }
 
-        .tagline {
-            color: var(--text-light);
-            font-size: 1.15em;
-            margin: 0 0 18px 0;
-        }
+  .skip{ position:absolute; left:-9999px; top:0; background:var(--accent); color:#fff; padding:10px 16px; z-index:20; font-weight:600; text-decoration:none; }
+  .skip:focus{ left:8px; top:8px; }
 
-        .contact-info {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            font-size: 1rem;
-            color: var(--text-light);
-        }
+  .wrap{ width:100%; max-width:var(--maxw); margin-inline:auto; padding-inline:var(--gut); }
 
-        .contact-info a {
-            color: var(--accent);
-            text-decoration: none;
-            font-weight: 600;
-        }
+  .eyebrow{
+    font-family:var(--mono); font-size:11px; letter-spacing:.16em;
+    text-transform:uppercase; color:var(--muted); margin:0;
+  }
 
-        .contact-info a:hover { text-decoration: underline; }
+  /* ---------------- HERO ---------------- */
 
-        section { margin-bottom: 50px; }
-        section:last-of-type { margin-bottom: 0; }
+  .hero{
+    position:relative;
+    min-height:min(88svh, 880px);
+    display:flex;
+    align-items:flex-end;
+    overflow:hidden;
+    isolation:isolate;
+    background:#16202c;
+  }
 
-        h2 {
-            color: var(--primary);
-            border-bottom: 1px solid #eee;
-            padding-bottom: 10px;
-            margin-top: 0;
-            margin-bottom: 25px;
-            text-transform: uppercase;
-            font-size: 1.2em;
-            letter-spacing: 1px;
-        }
+  .hero picture{ display:contents; }
 
-        .intro p { margin-top: 0; }
+  .hero__img{
+    position:absolute; inset:0;
+    width:100%; height:100%;
+    object-fit:cover;
+    object-position:72% 50%;
+    z-index:-2;
+  }
 
-        .links-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-        }
+  .hero__scrim{
+    position:absolute; inset:0; z-index:-1; pointer-events:none;
+    background:
+      linear-gradient(to top, var(--ink) 0%, rgba(11,12,14,.42) 11%, rgba(11,12,14,0) 30%),
+      linear-gradient(to right, rgba(8,9,11,.94) 0%, rgba(8,9,11,.86) 26%, rgba(8,9,11,.42) 52%, rgba(8,9,11,.06) 74%, rgba(8,9,11,0) 100%);
+  }
 
-        .link-card {
-            display: block;
-            background: #fcfcfc;
-            border: 1px solid #eee;
-            padding: 20px;
-            border-radius: 6px;
-            text-decoration: none;
-            color: inherit;
-            transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
-        }
+  .hero__inner{ position:relative; width:100%; padding-block: clamp(56px, 12vh, 130px); }
 
-        .link-card:hover {
-            border-color: var(--accent);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-            transform: translateY(-2px);
-        }
+  .hero h1{
+    margin:.3em 0 0;
+    font-size:clamp(3rem, 10.6vw, 8.6rem);
+    font-weight:800;
+    font-stretch:118%;
+    line-height:.88;
+    letter-spacing:-.035em;
+    text-wrap:balance;
+  }
+  .hero h1 .surname{ display:block; }
 
-        .link-title {
-            display: block;
-            font-weight: bold;
-            color: var(--accent);
-            margin-bottom: 5px;
-            text-transform: uppercase;
-            font-size: 0.85em;
-            letter-spacing: 0.5px;
-        }
+  .hero__lede{
+    margin:clamp(22px, 3.6vh, 36px) 0 0;
+    font-size:clamp(1.08rem, 2.1vw, 1.5rem);
+    font-weight:500; line-height:1.35; letter-spacing:-.014em;
+    max-width:23ch; color:var(--paper-dim);
+  }
+  .hero__rule{ display:block; width:56px; height:3px; background:var(--accent); margin-bottom:clamp(18px,2.6vh,26px); }
 
-        .link-desc {
-            color: var(--text-light);
-            font-size: 0.95em;
-        }
+  .hero__place{ margin-top:clamp(28px,5vh,54px); display:flex; gap:12px; align-items:center; color:var(--muted); }
+  .hero__place span{ font-family:var(--mono); font-size:11px; letter-spacing:.16em; text-transform:uppercase; }
+  .hero__place i{ display:block; width:26px; height:1px; background:#3A3E44; }
 
-        footer p {
-            text-align: center;
-            font-size: 0.85em;
-            color: #999;
-            margin-top: 60px;
-        }
+  /* Mobile: stop overlaying the figure — stack image over type instead. */
+  @media (max-width:760px){
+    .hero{ display:block; min-height:0; background:var(--ink); overflow:visible; }
+    .hero__img{
+      position:relative; inset:auto; z-index:0;
+      height:min(56svh, 480px);
+      object-position:52% 26%;
+    }
+    .hero__scrim{
+      top:0; bottom:auto; height:min(56svh,480px); z-index:1;
+      background:linear-gradient(to top, var(--ink) 1%, rgba(11,12,14,0) 34%);
+    }
+    .hero__inner{ z-index:2; padding-block: 6px clamp(44px,8vh,68px); }
+    .hero h1{ font-size:clamp(2.8rem, 14vw, 4.5rem); font-stretch:112%; }
+    .hero__lede{ max-width:28ch; }
+  }
 
-        @media (max-width: 768px) {
-            .container {
-                margin: 0;
-                padding: 25px;
-                width: 100%;
-                border-radius: 0;
-                box-shadow: none;
-            }
+  /* ---------------- INTRO ---------------- */
 
-            h1 { font-size: 2em; }
+  .intro{ padding-block: clamp(66px, 11vh, 126px); }
+  .intro::after{ content:""; display:block; }
 
-            .contact-info {
-                flex-direction: column;
-                gap: 8px;
-            }
+  .intro__grid{
+    display:grid;
+    grid-template-columns: minmax(0,1fr);
+    gap: clamp(34px, 5vw, 64px);
+    align-items:start;
+  }
 
-            .contact-info span { display: none; }
-        }
-    </style>
+  @media (min-width:860px){
+    .intro__grid{ grid-template-columns: minmax(0,30rem) minmax(0,1fr); gap: clamp(48px, 8vw, 116px); }
+  }
+
+  .intro__body p{
+    margin:0 0 .9em;
+    font-size:clamp(1.3rem, 2.7vw, 1.95rem);
+    font-weight:400; line-height:1.36; letter-spacing:-.022em;
+    max-width:28ch; color:var(--paper-dim); text-wrap:pretty;
+  }
+  .intro__body p:last-child{ margin-bottom:0; }
+  .intro__body strong{ font-weight:600; color:var(--paper); }
+
+  .facts{ list-style:none; margin:0; padding:0; border-top:1px solid var(--line); align-self:start; }
+  @media (max-width:859px){ .facts{ margin-top:clamp(36px,5vh,54px); max-width:34ch; } }
+
+  .facts li{ padding:16px 0; border-bottom:1px solid var(--line); }
+  .facts dfn{
+    display:block; font-style:normal; color:var(--muted);
+    font-family:var(--mono); font-size:10px; letter-spacing:.16em;
+    text-transform:uppercase; margin-bottom:5px;
+  }
+  .facts b{ font-weight:500; font-size:15px; line-height:1.45; letter-spacing:-.005em; }
+
+  /* ---------------- ELSEWHERE ---------------- */
+
+  .elsewhere{ padding-block: clamp(52px, 8vh, 92px); border-top:1px solid var(--line-soft); }
+
+  .elsewhere h2{
+    margin:0 0 clamp(26px,4vh,42px);
+    font-family:var(--mono); font-size:11px; font-weight:500;
+    letter-spacing:.18em; text-transform:uppercase; color:var(--muted);
+  }
+
+  .links{ border-top:1px solid var(--line); }
+
+  .link{
+    display:grid; grid-template-columns:1fr auto; align-items:baseline;
+    gap:4px 24px;
+    padding:clamp(22px,3.4vh,32px) 0;
+    border-bottom:1px solid var(--line);
+    text-decoration:none;
+    transition:border-color .18s ease;
+  }
+  .link__title{
+    grid-column:1;
+    font-size:clamp(1.5rem, 4.3vw, 2.5rem);
+    font-weight:800; font-stretch:112%; letter-spacing:-.025em; line-height:1.05;
+    transition:color .18s ease;
+  }
+  .link__desc{ grid-column:1; color:var(--muted); font-size:15px; max-width:48ch; margin-top:7px; }
+  .link__arrow{
+    grid-column:2; grid-row:1 / span 2; align-self:center;
+    color:#4A4F56; font-size:22px; line-height:1;
+    transition:color .18s ease, transform .18s ease;
+  }
+
+  .link:hover{ border-bottom-color:var(--accent); }
+  .link:hover .link__title{ color:var(--accent); }
+  .link:hover .link__arrow{ color:var(--accent); transform:translateX(6px); }
+  @media (hover:none){ .link:hover .link__title{ color:inherit; } .link:hover .link__arrow{ transform:none; } }
+
+  /* ---------------- FOOTER ---------------- */
+
+  .foot__inner{
+    border-top:1px solid var(--line-soft);
+    padding-block: clamp(28px,5vh,44px) clamp(44px,7vh,80px);
+    color:var(--muted);
+    font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase;
+    display:flex; flex-wrap:wrap; gap:10px 28px; justify-content:space-between;
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    html{ scroll-behavior:auto; }
+    *{ animation:none !important; transition:none !important; }
+  }
+</style>
 </head>
 <body>
 
-<div class="container">
-    <header>
-        <h1>Jacob Dixon</h1>
-        <p class="tagline">Product and design leader in Seattle.</p>
-        <div class="contact-info">
-            <a href="mailto:jacob.dixon@gmail.com">jacob.dixon@gmail.com</a>
-            <span>•</span>
-            <a href="https://linkedin.com/in/jacobdixonux">linkedin.com/in/jacobdixonux</a>
-        </div>
-    </header>
+<a class="skip" href="#main">Skip to content</a>
 
-    <section class="intro">
-        <h2>Hello</h2>
+<header class="hero">
+  <picture>
+    <source media="(max-width:760px)" srcset="img/hero-tall.webp" type="image/webp">
+    <source media="(max-width:760px)" srcset="img/hero-tall.jpg">
+    <source srcset="img/hero-wide.webp 2400w, img/hero-wide-sm.webp 1400w" sizes="100vw" type="image/webp">
+    <img class="hero__img"
+         src="img/hero-wide.jpg"
+         srcset="img/hero-wide.jpg 2400w, img/hero-wide-sm.jpg 1400w"
+         sizes="100vw"
+         alt="Jacob Dixon standing on a ridge in Mount Rainier National Park, the Tatoosh Range and a distant volcano behind him."
+         fetchpriority="high" decoding="async" width="2400" height="1350">
+  </picture>
+  <div class="hero__scrim" aria-hidden="true"></div>
+
+  <div class="hero__inner wrap">
+    <p class="eyebrow">Product &amp; Design Leadership</p>
+    <h1>Jacob<span class="surname">Dixon</span></h1>
+    <p class="hero__lede">
+      <span class="hero__rule" aria-hidden="true"></span>
+      Twenty years of building the teams that ship the thing.
+    </p>
+    <p class="hero__place"><i aria-hidden="true"></i><span>Seattle, Washington</span></p>
+  </div>
+</header>
+
+<main id="main">
+
+  <section class="intro wrap">
+    <div class="intro__grid">
+
+      <div class="intro__body">
         <p>
-            I'm Jacob — I build and lead product and design teams. Over the past twenty years
-            I've founded UX functions from scratch and shipped 15+ new-to-market products across
-            healthcare, tax, and proptech. Today I'm Director of UX at RealPage.
+          I'm Jacob. I've founded UX functions from scratch and shipped
+          <strong>15+ new-to-market products</strong> across healthcare, tax, and proptech —
+          usually owning both the product strategy and the design that proves it.
         </p>
-    </section>
+        <p>
+          Today I'm <strong>Director of UX at RealPage</strong>, where I landed by way of the
+          Knock CRM acquisition.
+        </p>
+      </div>
 
-    <section id="elsewhere">
-        <h2>Elsewhere</h2>
-        <div class="links-grid">
-            <a class="link-card" href="/resume">
-                <span class="link-title">Résumé</span>
-                <span class="link-desc">Experience, skills, and background.</span>
-            </a>
-            <a class="link-card" href="/noschnitz">
-                <span class="link-title">Case study: NoSchnitz</span>
-                <span class="link-desc">How I run product — research, measurement, and a written operating system.</span>
-            </a>
-            <a class="link-card" href="https://linkedin.com/in/jacobdixonux">
-                <span class="link-title">LinkedIn</span>
-                <span class="link-desc">The professional version of all this.</span>
-            </a>
-        </div>
-    </section>
+      <ul class="facts">
+        <li><dfn>Now</dfn><b>Director of UX, RealPage</b></li>
+        <li><dfn>Previously</dfn><b>Knock CRM · Avalara · Change Healthcare · Providence</b></li>
+        <li><dfn>Focus</dfn><b>Product strategy · Design orgs · Early-stage products</b></li>
+        <li><dfn>Based in</dfn><b>Seattle</b></li>
+      </ul>
+    </div>
+  </section>
 
-    <footer>
-        <p>&copy; 2026 Jacob Dixon</p>
-    </footer>
+  <section class="elsewhere wrap">
+    <h2>Elsewhere</h2>
+    <div class="links">
 
-</div>
+      <a class="link" href="https://redswyft.com" rel="noopener">
+        <span class="link__title">RedSwyft</span>
+        <span class="link__desc">It&rsquo;s the enrollment and verification layer for a safety net that is about to matter to far more people than it does today — and housing is the only credible way in.</span>
+        <span class="link__arrow" aria-hidden="true">→</span>
+      </a>
+
+      <a class="link" href="/resume">
+        <span class="link__title">Résumé</span>
+        <span class="link__desc">Twenty years of it — experience, skills, background.</span>
+        <span class="link__arrow" aria-hidden="true">→</span>
+      </a>
+
+      <a class="link" href="/noschnitz">
+        <span class="link__title">NoSchnitz</span>
+        <span class="link__desc">A case study in how I actually run product: research, measurement, and a written operating system.</span>
+        <span class="link__arrow" aria-hidden="true">→</span>
+      </a>
+
+      <a class="link" href="https://linkedin.com/in/jacobdixonux" rel="me noopener">
+        <span class="link__title">LinkedIn</span>
+        <span class="link__desc">The professional version of all this.</span>
+        <span class="link__arrow" aria-hidden="true">→</span>
+      </a>
+
+    </div>
+  </section>
+
+</main>
+
+<footer class="wrap">
+  <div class="foot__inner">
+    <span>&copy; 2026 Jacob Dixon</span>
+    <span>Mount Rainier National Park · July 2023</span>
+  </div>
+</footer>
+
 </body>
 </html>
