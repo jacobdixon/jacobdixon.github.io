@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NoSchnitz — Jacob Dixon</title>
+<meta name="description" content="How one product gets built: research-grounded sequencing, pre-registered measurement, and a written operating system. A case study by Jacob Dixon.">
+<meta property="og:title" content="NoSchnitz — a product case study">
+<meta property="og:description" content="Research-grounded sequencing, pre-registered measurement, and a written operating system — 212 releases in 29 days.">
+<meta property="og:type" content="article">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%231d3b30'/%3E%3Ctext x='16' y='23' font-size='19' text-anchor='middle' fill='%23e8c56a' font-family='Georgia,serif'%3EQ%3C/text%3E%3C/svg%3E">
+<style>
+:root{
+  --paper:#f7f5f0;
+  --paper-2:#fffefb;
+  --ink:#17201c;
+  --ink-2:#4a544e;
+  --ink-3:#7c857f;
+  --rule:#e0dcd2;
+  --felt:#1d3b30;
+  --felt-2:#2c584a;
+  --brass:#a67c2e;
+  --brass-lt:#e8c56a;
+  --flag:#9a3412;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI","Helvetica Neue",Arial,sans-serif;
+  --maxw:720px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:var(--sans);font-size:17px;line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+}
+img{max-width:100%}
+
+/* ---------- progress rail ---------- */
+#rail{position:fixed;top:0;left:0;height:3px;width:100%;z-index:60;background:transparent}
+#rail i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--felt),var(--brass));transition:width .1s linear}
+
+/* ---------- layout ---------- */
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+.wide{max-width:980px;margin:0 auto;padding:0 24px}
+section{padding:82px 0;border-top:1px solid var(--rule)}
+section:first-of-type{border-top:0}
+
+/* ---------- reveal ---------- */
+.rv{opacity:0;transform:translateY(18px);transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1)}
+.rv.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}html{scroll-behavior:auto}}
+
+/* ---------- type ---------- */
+h1,h2,h3{font-family:var(--serif);font-weight:600;letter-spacing:-.01em;line-height:1.15;margin:0}
+h2{font-size:clamp(1.7rem,3.6vw,2.3rem);margin-bottom:6px}
+h3{font-size:1.18rem;margin:0 0 6px}
+p{margin:0 0 1.1em}
+a{color:var(--felt-2);text-underline-offset:3px;text-decoration-thickness:1px}
+a:hover{color:var(--brass)}
+.kicker{
+  font-family:var(--mono);font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--brass);margin:0 0 16px;display:flex;align-items:center;gap:10px;
+}
+.kicker::after{content:"";flex:1;height:1px;background:var(--rule)}
+.lede{font-size:1.16rem;color:var(--ink-2)}
+.dek{font-family:var(--serif);font-size:1.22rem;color:var(--ink-2);font-style:italic;margin:0 0 26px}
+small,.fine{font-size:.86rem;color:var(--ink-3);line-height:1.55}
+
+/* ---------- hero ---------- */
+#hero{
+  background:var(--felt);color:#eef2ee;border-top:0;
+  padding:clamp(74px,13vh,130px) 0 0;position:relative;overflow:hidden;
+}
+#hero::after{
+  content:"";position:absolute;inset:auto -10% -40% -10%;height:60%;
+  background:radial-gradient(ellipse at 50% 0%,rgba(232,197,106,.09),transparent 70%);pointer-events:none;
+}
+#hero .wrap{position:relative;z-index:2}
+.eyebrow{font-family:var(--mono);font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--brass-lt);opacity:.85}
+#hero h1{font-size:clamp(2.5rem,7.2vw,4rem);color:#fff;margin:14px 0 20px}
+#hero .sub{font-size:1.2rem;color:#c9d6cf;max-width:34em;margin-bottom:8px}
+#hero .sub strong{color:#fff;font-weight:600}
+.trump{display:flex;gap:7px;margin:34px 0 0;flex-wrap:wrap}
+.trump span{
+  font-family:var(--serif);font-size:.9rem;color:var(--brass-lt);
+  border:1px solid rgba(232,197,106,.32);border-radius:4px;padding:5px 9px;
+  background:rgba(0,0,0,.16);opacity:0;transform:translateY(8px);
+  animation:deal .5s cubic-bezier(.22,1,.36,1) forwards;
+}
+@keyframes deal{to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.trump span{animation:none;opacity:1;transform:none}}
+
+/* ---------- stat band ---------- */
+#stats{background:var(--felt);color:#eef2ee;border-top:0;padding:52px 0 78px}
+.statgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.1);border-radius:8px;overflow:hidden}
+.stat{background:var(--felt);padding:22px 18px}
+.stat b{display:block;font-family:var(--serif);font-size:clamp(1.7rem,4.4vw,2.4rem);color:#fff;line-height:1;font-variant-numeric:tabular-nums}
+.stat span{display:block;font-size:.79rem;color:#a8bcb2;margin-top:9px;line-height:1.4}
+#stats .foot{margin:20px 0 0;font-size:.84rem;color:#8fa79c}
+#stats .foot a{color:var(--brass-lt)}
+@media(max-width:680px){.statgrid{grid-template-columns:1fr 1fr}}
+
+/* ---------- pull / callout ---------- */
+.pull{
+  border-left:3px solid var(--brass);padding:4px 0 4px 20px;margin:30px 0;
+  font-family:var(--serif);font-size:1.2rem;line-height:1.5;color:var(--ink);
+}
+.note{
+  background:var(--paper-2);border:1px solid var(--rule);border-radius:8px;
+  padding:20px 22px;margin:28px 0;
+}
+.note h3{font-size:.94rem;font-family:var(--sans);letter-spacing:.02em;margin-bottom:8px}
+.note p:last-child{margin-bottom:0}
+
+/* ---------- board ---------- */
+.boardctl{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px}
+.chip{
+  font:inherit;font-size:.8rem;font-family:var(--mono);letter-spacing:.04em;
+  background:var(--paper-2);border:1px solid var(--rule);color:var(--ink-2);
+  padding:6px 13px;border-radius:99px;cursor:pointer;transition:all .15s;
+}
+.chip:hover{border-color:var(--brass)}
+.chip[aria-pressed="true"]{background:var(--felt);border-color:var(--felt);color:#fff}
+.board{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.col{background:var(--paper-2);border:1px solid var(--rule);border-radius:8px;padding:16px;min-height:100px}
+.col h4{
+  margin:0 0 4px;font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--brass);
+}
+.col .why{font-size:.8rem;color:var(--ink-3);margin:0 0 14px;line-height:1.45;border-bottom:1px solid var(--rule);padding-bottom:12px}
+.card{
+  border-left:2px solid var(--rule);padding:2px 0 2px 11px;margin:0 0 13px;font-size:.87rem;line-height:1.45;color:var(--ink-2);
+  transition:opacity .25s,border-color .25s;
+}
+.card:last-child{margin-bottom:0}
+.card b{color:var(--ink);font-weight:600;display:block}
+.card .tag{font-family:var(--mono);font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)}
+.card.on{border-left-color:var(--brass)}
+.card.off{opacity:.26}
+@media(max-width:760px){.board{grid-template-columns:1fr}}
+
+/* ---------- dark feature ---------- */
+.dark{background:var(--felt);color:#e7ede9;border-top:0}
+.dark h2{color:#fff}
+.dark .kicker{color:var(--brass-lt)}
+.dark .kicker::after{background:rgba(255,255,255,.16)}
+.dark .dek{color:#b9cbc2}
+.dark p{color:#cfdcd5}
+.dark .fine{color:#8fa79c}
+.dark .pull{border-left-color:var(--brass-lt);color:#fff}
+
+/* ---------- decision widget ---------- */
+.dw{background:rgba(0,0,0,.2);border:1px solid rgba(255,255,255,.13);border-radius:10px;padding:22px;margin:32px 0 0}
+.dwtabs{display:flex;gap:0;background:rgba(0,0,0,.28);border-radius:7px;padding:4px;margin-bottom:22px}
+.dwtabs button{
+  flex:1;font:inherit;font-size:.85rem;font-family:var(--mono);letter-spacing:.03em;
+  background:transparent;border:0;color:#a8bcb2;padding:10px 8px;border-radius:5px;cursor:pointer;transition:all .18s;
+}
+.dwtabs button[aria-selected="true"]{background:var(--brass);color:#231a05;font-weight:600}
+.dwrow{display:grid;grid-template-columns:130px 1fr;gap:14px 18px;font-size:.92rem;align-items:start}
+.dwrow dt{font-family:var(--mono);font-size:.7rem;letter-spacing:.11em;text-transform:uppercase;color:var(--brass-lt);padding-top:4px}
+.dwrow dd{margin:0;color:#dbe6e0}
+.verdict{margin-top:20px;padding-top:18px;border-top:1px solid rgba(255,255,255,.13);font-size:.95rem}
+.verdict b{color:#fff}
+.shipped{
+  display:inline-block;font-family:var(--mono);font-size:.65rem;letter-spacing:.13em;text-transform:uppercase;
+  background:var(--brass-lt);color:#231a05;padding:3px 8px;border-radius:3px;font-weight:700;margin-left:8px;vertical-align:2px;
+}
+@media(max-width:620px){.dwrow{grid-template-columns:1fr;gap:4px 0}.dwrow dd{margin-bottom:12px}}
+
+/* ---------- cadence chart ---------- */
+.chartbox{margin:6px 0 0}
+.chart{display:flex;align-items:flex-end;gap:2px;height:150px;padding:0;border-bottom:1px solid var(--rule)}
+.bar{flex:1;background:var(--felt);border-radius:2px 2px 0 0;height:0;transition:height .9s cubic-bezier(.22,1,.36,1);position:relative;min-height:2px}
+.bar.mark{background:var(--brass)}
+.bar:hover{background:var(--brass)}
+.bar .tip{
+  position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);
+  background:var(--ink);color:#fff;font-size:.72rem;line-height:1.35;padding:6px 9px;border-radius:5px;
+  white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s;z-index:5;font-family:var(--mono);
+}
+.bar:hover .tip,.bar:focus-visible .tip{opacity:1}
+.axis{display:flex;justify-content:space-between;font-family:var(--mono);font-size:.68rem;color:var(--ink-3);margin-top:9px;letter-spacing:.06em}
+.legend{display:flex;gap:18px;flex-wrap:wrap;margin-top:16px;font-size:.78rem;color:var(--ink-3)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.milestones{margin-top:26px;border-top:1px solid var(--rule);padding-top:18px}
+.ms{display:grid;grid-template-columns:88px 1fr;gap:12px;font-size:.87rem;padding:7px 0;color:var(--ink-2);line-height:1.45}
+.ms time{font-family:var(--mono);font-size:.74rem;color:var(--brass);letter-spacing:.04em;padding-top:3px}
+@media(max-width:560px){.ms{grid-template-columns:1fr;gap:1px}.ms time{padding-top:0}}
+
+/* ---------- rules list ---------- */
+.rules{list-style:none;padding:0;margin:26px 0 0;counter-reset:r}
+.rules li{
+  counter-increment:r;padding:0 0 22px 46px;position:relative;margin-bottom:22px;border-bottom:1px solid var(--rule);
+}
+.rules li:last-child{border-bottom:0;margin-bottom:0;padding-bottom:0}
+.rules li::before{
+  content:counter(r,decimal-leading-zero);position:absolute;left:0;top:1px;
+  font-family:var(--mono);font-size:.74rem;color:var(--brass);border:1px solid var(--rule);
+  width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:50%;
+}
+.rules b{display:block;font-family:var(--serif);font-size:1.1rem;margin-bottom:5px;font-weight:600}
+.rules span{font-size:.94rem;color:var(--ink-2)}
+
+/* ---------- traps ---------- */
+.traps{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:28px}
+.trap{background:var(--paper-2);border:1px solid var(--rule);border-radius:8px;padding:18px;font-size:.88rem;line-height:1.5;color:var(--ink-2)}
+.trap b{display:block;font-family:var(--serif);font-size:1.02rem;color:var(--ink);margin-bottom:7px}
+.trap em{display:block;font-style:normal;font-family:var(--mono);font-size:.72rem;color:var(--flag);letter-spacing:.06em;margin-top:10px;text-transform:uppercase}
+@media(max-width:760px){.traps{grid-template-columns:1fr}}
+
+/* ---------- close ---------- */
+#close{background:var(--felt);color:#e7ede9;border-top:0}
+#close h2{color:#fff}
+#close .kicker{color:var(--brass-lt)}
+#close .kicker::after{background:rgba(255,255,255,.16)}
+#close p{color:#cfdcd5}
+.claims{list-style:none;padding:0;margin:26px 0 34px}
+.claims li{padding:16px 0;border-top:1px solid rgba(255,255,255,.14);font-size:1.02rem;color:#dbe6e0}
+.claims li:last-child{border-bottom:1px solid rgba(255,255,255,.14)}
+.claims b{color:#fff;font-family:var(--serif);font-size:1.12rem;display:block;margin-bottom:4px;font-weight:600}
+.cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px}
+.btn{
+  display:inline-block;text-decoration:none;font-size:.92rem;font-weight:600;
+  padding:11px 20px;border-radius:6px;transition:all .18s;
+}
+.btn.p{background:var(--brass-lt);color:#231a05}
+.btn.p:hover{background:#fff;color:var(--felt)}
+.btn.s{border:1px solid rgba(255,255,255,.3);color:#e7ede9}
+.btn.s:hover{border-color:var(--brass-lt);color:var(--brass-lt)}
+footer{background:var(--felt);color:#7c9489;font-size:.8rem;padding:0 0 46px;text-align:center}
+footer a{color:#a8bcb2}
+</style>
+</head>
+<body>
+
+<div id="rail"><i></i></div>
+
+<!-- ================= HERO ================= -->
+<section id="hero">
+  <div class="wrap">
+    <p class="eyebrow">Product case study · Jacob Dixon</p>
+    <h1>NoSchnitz</h1>
+    <p class="sub">A five-handed Sheepshead game for a group of friends who could never all be free on the same Thursday — and a working demonstration of <strong>how I run product</strong>: research before sequence, measurement before belief, and every reason written down where the next person can check it.</p>
+    <div class="trump" aria-hidden="true">
+      <span style="animation-delay:.10s">Q♣</span><span style="animation-delay:.16s">Q♠</span><span style="animation-delay:.22s">Q♥</span><span style="animation-delay:.28s">Q♦</span><span style="animation-delay:.34s">J♣</span><span style="animation-delay:.40s">J♠</span><span style="animation-delay:.46s">J♥</span><span style="animation-delay:.52s">J♦</span>
+    </div>
+  </div>
+</section>
+
+<!-- ================= STATS ================= -->
+<section id="stats">
+  <div class="wrap">
+    <div class="statgrid">
+      <div class="stat"><b data-count="212">0</b><span>numbered releases, each with written rationale</span></div>
+      <div class="stat"><b data-count="29">0</b><span>days from first commit to the release this is measured at</span></div>
+      <div class="stat"><b data-count="101">0</b><span>issues filed on a labelled Now/Next/Later board</span></div>
+      <div class="stat"><b data-count="40" data-prefix="~">0</b><span>named test and measurement harnesses</span></div>
+    </div>
+    <p class="foot">Live at <a href="https://www.noschnitz.com" rel="noopener">noschnitz.com</a>. Solo against four AI opponents, or multiplayer with a shareable link. Figures below are as of v0.120.1.</p>
+  </div>
+</section>
+
+<!-- ================= RESEARCH ================= -->
+<section>
+  <div class="wrap rv">
+    <p class="kicker">01 — Where the roadmap came from</p>
+    <h2>It started with an interview, not an idea</h2>
+    <p class="dek">The group had already tried this. Understanding why it failed was the whole roadmap.</p>
+
+    <p>During the pandemic the same five-to-seven people ran a biweekly Thursday Sheepshead night on an existing site, with a separate video call alongside it, coordinated over group text. It failed more often than it worked.</p>
+
+    <p>The interview found that it wasn't failing for lack of interest. It was failing because a <em>scheduled</em> commitment kept losing to spontaneous life, and getting five people to commit in advance was the actual bottleneck. On the good nights the opposite problem appeared: six or seven people wanted in, and the tool couldn't gracefully rotate anyone through five seats.</p>
+
+    <p>The finding that reordered everything was smaller and less flattering to the product: <strong>the video call was doing the emotional work.</strong> The card game was an excuse to fill the quiet spaces.</p>
+
+    <div class="pull">Which meant the thing to build first was not a better card game. It was the removal of the coordination tax — and a social layer treated as first-class rather than a second tab.</div>
+
+    <p>That became a written hypothesis at the top of the roadmap, with everything in <em>Now</em> scoped to test it and nothing else: <strong>will this group actually play together, on a whim, without a scheduled event?</strong> AI-filled seats so there is no minimum headcount. A shareable link so nobody has to cajole a group text. Presence so "is it worth hopping on" answers itself.</p>
+
+    <div class="note">
+      <h3>Why this matters more than the artifact it produced</h3>
+      <p>A roadmap that starts from a hypothesis can be wrong in public. Six days in, the first real session ran two humans and three AI seats through roughly twenty hands with no stalls — the table filled to five with only two people in the room, which is precisely the bet. The write-up in the repo says so and then immediately says not to read it as coverage: two humans is not five, nobody joined mid-hand, nobody backgrounded a phone. <span class="fine">A result you are willing to under-claim is a result you can still learn from.</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ROADMAP ================= -->
+<section>
+  <div class="wrap rv">
+    <p class="kicker">02 — Sequence</p>
+    <h2>The roadmap is an argument, not a list</h2>
+    <p class="dek">A board shows what is being worked on and never why <em>that</em> rather than something else.</p>
+
+    <p>Features decompose into epics and epics into user stories, with stable IDs so a commit can name the story it implements. But the part that does the work is the paragraph under each bucket explaining why the order is the order — because a reader who can't see the reasoning concludes the sequencing was accidental rather than chosen.</p>
+
+    <div class="boardctl" role="group" aria-label="Filter the board">
+      <button class="chip" aria-pressed="false" data-f="all">All</button>
+      <button class="chip" aria-pressed="false" data-f="mp">Multiplayer</button>
+      <button class="chip" aria-pressed="false" data-f="com">Community</button>
+      <button class="chip" aria-pressed="false" data-f="ai">AI &amp; engine</button>
+      <button class="chip" aria-pressed="false" data-f="tool">Tooling</button>
+    </div>
+
+    <div class="board">
+      <div class="col">
+        <h4>Now</h4>
+        <p class="why">Scoped to test one hypothesis: will they play on a whim, unscheduled?</p>
+        <div class="card" data-t="mp"><span class="tag">Epic · MP-1</span><b>Shareable table links</b>One click to a table, a link you can text, live arrivals.</div>
+        <div class="card" data-t="mp"><span class="tag">Epic · MP-2</span><b>AI seat-fill</b>Playable the instant one human shows up. No minimum headcount.</div>
+        <div class="card" data-t="mp"><span class="tag">Epic · MP-3</span><b>Guest join</b>A name and a seat. No account, no download.</div>
+        <div class="card" data-t="com"><span class="tag">Epic · COM-3</span><b>Seamless seat cover</b>Step away, hand the seat to AI, reclaim it. One AFK player can never freeze a table.</div>
+        <div class="card" data-t="ai"><span class="tag">Bug · area: ai</span><b>Clairvoyance leak in the endgame solver</b>The solver carried the real partner into every sampled world. Filed with the reproduction, not the symptom.</div>
+      </div>
+      <div class="col">
+        <h4>Next</h4>
+        <p class="why">Earns its place only once the Now hypothesis has an answer.</p>
+        <div class="card" data-t="mp"><span class="tag">Epic · MP-5</span><b>Table lifecycle</b>Leaving, watching, coming back — including from a second device.</div>
+        <div class="card" data-t="ai"><span class="tag">Epic · AI-1</span><b>Variant-aware judgement</b>The engine's bars were tuned under one rule set and are applied under several.</div>
+        <div class="card" data-t="ai"><span class="tag">Epic · AI-2</span><b>Pick quality</b>The marginal hand loses money. Named as an epic so the fix isn't a constant nudge.</div>
+        <div class="card" data-t="mp"><span class="tag">Story</span><b>Real-device multiplayer coverage</b>Every multiplayer bug worth fixing came from a person on a phone, not a harness.</div>
+        <div class="card" data-t="tool"><span class="tag">area: tooling</span><b>A daily report that carries information</b>Its version note fires nearly every day, so it says nothing. A signal that never varies is not a signal.</div>
+      </div>
+      <div class="col">
+        <h4>Later</h4>
+        <p class="why">Deliberately deferred — with the reason attached, so deferral stays a decision.</p>
+        <div class="card" data-t="com"><span class="tag">Epic · COM-1</span><b>Embedded voice/video</b>Launch-critical by the research, paused by a decision recorded on the epic itself.</div>
+        <div class="card" data-t="com"><span class="tag">Epic · COM-2</span><b>Presence</b>Depends on persistent accounts to be more than in-app.</div>
+        <div class="card" data-t="mp"><span class="tag">Story</span><b>Collapse the table POSTs</b>Not cleanup — the API sits at eleven of the platform's twelve function slots. This is what makes room to build anything.</div>
+        <div class="card" data-t="ai"><span class="tag">Protected scope</span><b>Learn-to-play tutorial</b>Not low priority. It only pays off once there is somewhere to send a new player.</div>
+      </div>
+    </div>
+
+    <div class="note">
+      <h3>Protected scope, and what it costs to protect</h3>
+      <p>The tutorial is core to the long-term goal and sits in <em>Later</em> anyway, because it can't pay off until public tables exist. Deferring it would normally mean quietly killing it — so the deferral came with an architecture constraint written into the same document: multiplayer had to be built as an <em>additional</em> mode alongside solo, reusing the pure rules engine, rather than a rewrite that entangles local and networked state. The tutorial slots in later exactly the way solo works today.</p>
+      <p class="fine" style="margin-top:12px">Sequencing a thing later is easy. Keeping it cheap to build later is the actual work.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= WORKED EXAMPLE ================= -->
+<section class="dark">
+  <div class="wrap rv">
+    <p class="kicker">03 — A decision, in full</p>
+    <h2>When the measurement lost</h2>
+    <p class="dek">The number was unambiguous. It was also answering a different question than the one that mattered.</p>
+
+    <p>In Sheepshead the picker can go alone — no partner, quadruple stakes. The engine holds a threshold for when the AI takes that option. The app holds a second threshold for when it <em>offers</em> the option to a human. There is no rule that says they must be the same number.</p>
+
+    <p>Across 20,239 hands where the picker had a partner available, going alone at a threshold of 17 was behind by 1.9 points per hand, negative in four of four seeds. It only turned positive at 18. The offer bar was set to 18 on the strength of exactly that.</p>
+
+    <p>Then somebody played the game.</p>
+
+    <div class="dw">
+      <div class="dwtabs" role="tablist" aria-label="Two candidate thresholds">
+        <button role="tab" aria-selected="true" data-p="a">Bar at 18 — what the measurement said</button>
+        <button role="tab" aria-selected="false" data-p="b">Bar at 17 — what shipped</button>
+      </div>
+
+      <dl class="dwrow" id="pa">
+        <dt>Evidence</dt><dd>20,239 pickers with a partner available. Alone trails by 1.9 points per hand at 17; negative in 4 of 4 seeds; positive at 18.</dd>
+        <dt>Optimises</dt><dd>Expected units per hand. The correct objective, measured correctly.</dd>
+        <dt>What a player sees</dt><dd>An opponent goes alone on a hand their own screen refused to offer them. The game appears to know something it will not tell them.</dd>
+        <dt>Failure mode</dt><dd>A trust cost that no harness in the repo can measure, traded for a gain that every harness can.</dd>
+      </dl>
+
+      <dl class="dwrow" id="pb" hidden>
+        <dt>Change</dt><dd>Offer bar moved to 17, matching the AI's own bar. A test now asserts the two constants are <em>equal</em> rather than ordered, so moving one without considering the other fails loudly.</dd>
+        <dt>Price, named</dt><dd>Roughly 0.08 points per picked hand — quantified in advance, and bounded, rather than waved off as "small".</dd>
+        <dt>Bought</dt><dd>Consistency. The game never refuses you a move it will make itself.</dd>
+        <dt>Revert trigger</dt><dd>Written into the docs before shipping: if the win rate on human picks moves, 18 is the first thing to put back.</dd>
+      </dl>
+
+      <p class="verdict" id="verdict"><b>Shipped: 17.</b><span class="shipped">v0.46.0</span><br><span class="fine" style="color:#a8bcb2">Overriding a measurement is only defensible when you say what it costs, write the condition that would reverse you, and make the codebase fail loudly if someone later moves half of it.</span></p>
+    </div>
+
+    <div class="pull" style="margin-top:36px">"What should the AI do?" and "what should we offer a human?" are different questions. The answer is a product call sitting on top of a measurement — and reading the two as one number is how a team optimises itself into a game nobody enjoys.</div>
+  </div>
+</section>
+
+<!-- ================= INSTRUMENTS ================= -->
+<section>
+  <div class="wrap rv">
+    <p class="kicker">04 — Evidence</p>
+    <h2>Roughly forty instruments, and three ways they lie</h2>
+    <p class="dek">Every one of these rules exists because a specific measurement was wrong first.</p>
+
+    <p>Engine and AI changes are decided by paired A/B runs: a variant in one seat against four unchanged seats over identical shuffles, across several seeds. What makes a small result trustworthy is the null control — an arm identical to the baseline must return <strong>exactly +0.0000</strong>, and the test suite asserts it. A harness that can't return zero when nothing changed can't be believed when something does.</p>
+
+    <p>That was the easy part. The hard-won part is the standing list of ways the instruments mislead:</p>
+
+    <div class="traps">
+      <div class="trap">
+        <b>Dilution</b>
+        A rule that fires rarely reads as nothing in a whole-hand aggregate. Two separate rules measured flat — then +0.252 and +0.210 per firing once the denominator was the decisions the seat actually faced. One of them cost a full measurement pass concluding "not established" from a diluted number that was, undiluted, a 4.5-sigma effect.
+        <em>Check the firing rate before concluding anything</em>
+      </div>
+      <div class="trap">
+        <b>The wrong harness</b>
+        A one-seat A/B structurally cannot see cooperation: one defender stands down, the other two still contest the trick, and somebody else pays for the saving. When two harnesses genuinely disagreed, the resolution was not to prefer one — it was to build the third that answered the actual question.
+        <em>Don't settle a disagreement by picking a favourite</em>
+      </div>
+      <div class="trap">
+        <b>Fixtures that search</b>
+        A test that deals hands until it finds the shape it wants is sampling a fresh population every run. One did that at a measured 17% failure rate from the day it was written, went red on the main branch for a commit that had passed on its own PR, and skipped a production verification. Nothing was wrong with the release.
+        <em>Run a suite a dozen times before believing it is stable</em>
+      </div>
+    </div>
+
+    <div class="note">
+      <h3>The rule underneath all three</h3>
+      <p>Aggregate simulation is the safety net, not the detector. Every AI fix that has actually landed started from <em>one hand a human flagged</em>, was reproduced against the engine before anything changed, and was then pinned as an assertion with a negative control. Several correct-looking diagnoses measured as pure noise.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CADENCE ================= -->
+<section>
+  <div class="wrap rv">
+    <p class="kicker">05 — Cadence</p>
+    <h2>212 releases in 29 days</h2>
+    <p class="dek">Real data from the changelog. Each bar is one day; each unit is one versioned release with a written rationale.</p>
+
+    <div class="chartbox">
+      <div class="chart" id="chart" role="img" aria-label="Daily release counts from 24 July to 21 August 2026, ranging from zero to twenty releases per day."></div>
+      <div class="axis"><span>Jul 24</span><span>Aug 7</span><span>Aug 21</span></div>
+      <div class="legend">
+        <span><i style="background:var(--felt)"></i>Releases that day</span>
+        <span><i style="background:var(--brass)"></i>Day a decision below was made</span>
+      </div>
+    </div>
+
+    <div class="milestones">
+      <div class="ms"><time>Jul 24</time><div>Interview with the group. The roadmap is written from it the same day.</div></div>
+      <div class="ms"><time>Jul 30</time><div>First real multiplayer session — two humans, three AI seats, ~20 hands, no stalls. The seat-fill bet pays; the write-up refuses to call it coverage.</div></div>
+      <div class="ms"><time>Jul 31</time><div>Multiplayer promoted to production, verified by fetching the live bundle and grepping it for the version string — never by build hash, which the platform's minifier makes non-deterministic.</div></div>
+      <div class="ms"><time>Aug 2</time><div>First corpus mining run over 131 recorded hands: no large systematic gap against a competent human. Subtler signal needs an order of magnitude more hands, and that becomes a filed issue rather than a conclusion.</div></div>
+      <div class="ms"><time>Aug 13</time><div>Named, durable tables ship — along with a written list of the three things deliberately <em>not</em> built, each with what would change the answer.</div></div>
+      <div class="ms"><time>Aug 15</time><div>The backlog file is retired one day after it was created; the board moves to issues. The two-agent boundary is written down.</div></div>
+      <div class="ms"><time>Aug 20</time><div>Cadence change: every merge no longer ships to production. An integration branch goes in between, and promotion becomes a deliberate act.</div></div>
+      <div class="ms"><time>Aug 21</time><div>Chat ships — the first community feature — and reaches production a promotion earlier than intended through a flag scope accident. Caught by the automated content check, and blessed rather than rolled back, on the record.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= OPERATING SYSTEM ================= -->
+<section>
+  <div class="wrap rv">
+    <p class="kicker">06 — The operating system</p>
+    <h2>What the process actually is</h2>
+    <p class="dek">Two agents work this repo — one owning the roadmap and the board, one owning the code. Everything below exists because that only works if the contract is explicit.</p>
+
+    <ol class="rules">
+      <li><b>One fact, one home. Cite it; never restate it.</b><span>The test is simple: if this number changes, how many files must I edit? More than one is a defect, not a convenience. The project's own handoff doc refuses to restate the version number — because it once claimed v0.7.2 while the app shipped v0.22.0, and a stale number reads exactly like a fresh one.</span></li>
+
+      <li><b>Every reference must be openable by whoever has to act on it.</b><span>An issue that cites a rule by number, in a document the implementer cannot open, is not specifying. It is appealing to authority. Cite repo-relative paths, or inline the part being relied on and stop citing the rest.</span></li>
+
+      <li><b>Say what is explicitly out of scope.</b><span>And name the drift, not the principle. "Keep it focused" prevents nothing; "do not also move this constant — that is a separate measured change" prevents the thing that actually happens. This is the single highest-yield habit on the board.</span></li>
+
+      <li><b>Pre-register the measurement.</b><span>Instrument, null control, sample size, splits, engine version — and a control arm that would catch your own approximation. Deciding how you'll know you're right <em>before</em> doing the work is the whole difference between a measurement and a rationalisation.</span></li>
+
+      <li><b>Separate the tell from the objective.</b><span>A symptom that is easy to measure will get optimised if you let it. State in the issue which number is the symptom and which is the goal, where someone under time pressure will read it.</span></li>
+
+      <li><b>Mark what is not shaped yet.</b><span>An unshaped note is fine. An unshaped note wearing a shaped note's clothes is not — the reader can't tell "not thought through" from "small", and guesses wrong.</span></li>
+
+      <li><b>Corrections stay visible.</b><span>Status changes require evidence; a wrong conclusion gets a follow-up marked superseded, not a silent edit. Same for the role-based lenses the project reasons through: each carries a dated learnings log, and an untested learning is filed as a hypothesis rather than a fact.</span></li>
+    </ol>
+
+    <div class="note">
+      <h3>The shared file that lasted one day</h3>
+      <p>The backlog started as a markdown file. Within twenty-four hours it had collected a duplicate heading, two shipped items still open, and a line describing a deleted file as present in the working tree. It was retired for the issue board — not on taste, but on the observation that <strong>every mechanism a shared mutable file needs — section ownership, a claim protocol, re-read-before-closing, batching to control cost — is scaffolding for a merge conflict. Issues have no merge.</strong></p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SELF AUDIT ================= -->
+<section class="dark">
+  <div class="wrap rv">
+    <p class="kicker">07 — The uncomfortable one</p>
+    <h2>Rigour drifts to where rigour is cheap</h2>
+    <p class="dek">The most useful document in this project is the one that audits the rest of it.</p>
+
+    <p>Partway through, the board got read the way an outsider would read it. The finding was structural rather than careless, and it is the one I'd want a hiring committee to see.</p>
+
+    <p>The AI pick threshold — an item worth a fraction of a point per hand — had a null control, sign agreement across splits, a throw-in budget check and a control arm under a second rule set. Real-device multiplayer coverage sat in <em>Later</em> with no acceptance criteria at all and a note that it was "largely covered in practice." By the project's own written evidence, every multiplayer bug worth fixing had come from a person on a phone, and the newest, least-exercised surfaces had never been touched by five people at once.</p>
+
+    <div class="pull">The measurable thing got measured. That is not the same as the important thing getting measured.</div>
+
+    <p>The output wasn't a reshuffle. It was a standing question, written into the conventions where it gets asked again: <strong>is this rigorous because it matters most, or because it was the easiest thing to be rigorous about?</strong></p>
+
+    <p class="fine">The related test for whether reasoning is genuinely written down: hand the board to someone who wasn't in the conversation. Everything they need is reachable from a clone. Every number has one home. Every gate can be evaluated by someone who wasn't there. Every issue says what <em>not</em> to do. Anything unshaped is labelled unshaped. Where that fails, the reasoning is still in somebody's head — with a paper trail that looks like documentation, which is the more expensive failure, because it's the one nobody checks.</p>
+  </div>
+</section>
+
+<!-- ================= CONSTRAINTS ================= -->
+<section>
+  <div class="wrap rv">
+    <p class="kicker">08 — Constraints</p>
+    <h2>The platform's limits are roadmap inputs, not chores</h2>
+
+    <p>The API sits at <strong>eleven of the hosting plan's twelve serverless function slots</strong>, and the limit only fails at deploy time. That single fact is why "collapse the action endpoints" is a filed, prioritised backlog item framed as <em>what makes room to build anything</em> rather than as cleanup — and why any change that wants a new route reads that constraint first.</p>
+
+    <p>Deployments, not CI minutes, are the scarce resource: the plan allows a hundred a day, and one day of two-agent work spent well over thirty. So the deploy cost of every branch is written down as a table — zero per push to a working branch, one per merge to the integration branch, one per promotion — and documentation-only changes skip the build via a version-controlled ignore rule whose every failure direction is toward building rather than toward a missed deploy.</p>
+
+    <div class="note">
+      <h3>And the release process changed when the cost model did</h3>
+      <p>For most of the project every merge shipped to production. Once real people were playing between releases, that stopped being right: an integration branch went in the middle, and promotion became a deliberate, milestone-driven act with an explicit merge strategy — because squashing a promotion loses the merge base and makes the next promotion re-conflict everything already shipped. The old cadence isn't deleted from the record; it's marked historical, so a future reader knows which instructions are current.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CLOSE ================= -->
+<section id="close">
+  <div class="wrap rv">
+    <p class="kicker">09 — What this is evidence for</p>
+    <h2>Two claims</h2>
+
+    <ul class="claims">
+      <li><b>This is how I'd run a product organisation.</b>Sequence from research and say why the order is the order. Pre-register how you'll know you were right. Name what's out of scope. Price the trade-off when judgment overrules the number, and write the condition that would reverse you. Keep corrections visible. Then audit whether your rigour is going where it matters or just where it's easy.</li>
+      <li><b>I never stopped being able to build the thing.</b>Twenty years of founding design functions and shipping new-to-market products, and I can still take a product from a user interview to a live, instrumented, measured, multiplayer application — and hold the strategy and the execution in the same head, which is the gap most product-and-design leadership roles are actually asking someone to close.</li>
+    </ul>
+
+    <div class="cta">
+      <a class="btn p" href="https://www.noschnitz.com" rel="noopener">Play it</a>
+      <a class="btn s" href="/resume">Résumé</a>
+      <a class="btn s" href="https://linkedin.com/in/jacobdixonux" rel="noopener">LinkedIn</a>
+      <a class="btn s" href="mailto:jacob.dixon@gmail.com">Email</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p>Jacob Dixon · <a href="/">jacobdixon.me</a> · Figures as of v0.120.1, 21 August 2026. The repository is private; happy to walk through it.</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---- progress rail ---- */
+  var railFill = document.querySelector('#rail i');
+  function onScroll(){
+    var h = document.documentElement;
+    var max = h.scrollHeight - h.clientHeight;
+    var p = max > 0 ? (h.scrollTop || document.body.scrollTop) / max : 0;
+    railFill.style.width = (p * 100).toFixed(2) + '%';
+  }
+  window.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+
+  /* ---- reveal on scroll ---- */
+  var revealables = document.querySelectorAll('.rv');
+  if (!('IntersectionObserver' in window)) {
+    revealables.forEach(function(el){ el.classList.add('in'); });
+  } else {
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    }, {rootMargin:'0px 0px -8% 0px', threshold:0.06});
+    revealables.forEach(function(el){ io.observe(el); });
+  }
+
+  /* ---- count-up stats ---- */
+  var stats = document.querySelectorAll('.stat b[data-count]');
+  function countUp(el){
+    var target = parseInt(el.getAttribute('data-count'), 10);
+    var prefix = el.getAttribute('data-prefix') || '';
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce) { el.textContent = prefix + target; return; }
+    var start = null, dur = 1100;
+    function step(ts){
+      if (start === null) start = ts;
+      var t = Math.min((ts - start) / dur, 1);
+      var eased = 1 - Math.pow(1 - t, 3);
+      el.textContent = prefix + Math.round(target * eased);
+      if (t < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+  if ('IntersectionObserver' in window) {
+    var sio = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting) { countUp(e.target); sio.unobserve(e.target); }
+      });
+    }, {threshold:0.5});
+    stats.forEach(function(el){ sio.observe(el); });
+  } else {
+    stats.forEach(countUp);
+  }
+
+  /* ---- board filter ---- */
+  var chips = document.querySelectorAll('.chip');
+  var cards = document.querySelectorAll('.card');
+  function applyFilter(f){
+    cards.forEach(function(c){
+      c.classList.remove('on','off');
+      if (f === 'all') return;
+      if (c.getAttribute('data-t') === f) c.classList.add('on');
+      else c.classList.add('off');
+    });
+  }
+  chips.forEach(function(chip){
+    chip.addEventListener('click', function(){
+      var f = chip.getAttribute('data-f');
+      var wasOn = chip.getAttribute('aria-pressed') === 'true';
+      chips.forEach(function(c){ c.setAttribute('aria-pressed','false'); });
+      if (wasOn || f === 'all') { applyFilter('all'); }
+      else { chip.setAttribute('aria-pressed','true'); applyFilter(f); }
+    });
+  });
+
+  /* ---- decision widget ---- */
+  var tabs = document.querySelectorAll('.dwtabs button');
+  var panels = { a: document.getElementById('pa'), b: document.getElementById('pb') };
+  tabs.forEach(function(t){
+    t.addEventListener('click', function(){
+      tabs.forEach(function(x){ x.setAttribute('aria-selected','false'); });
+      t.setAttribute('aria-selected','true');
+      var k = t.getAttribute('data-p');
+      panels.a.hidden = (k !== 'a');
+      panels.b.hidden = (k !== 'b');
+    });
+  });
+
+  /* ---- release cadence chart (real data, 2026-07-24 → 2026-08-21) ---- */
+  var counts = [18,2,1,16,12,8,13,3,2,6,16,4,0,5,0,3,7,1,12,13,9,8,20,4,2,5,5,10,7];
+  var marks  = {0:1, 6:1, 7:1, 9:1, 20:1, 22:1, 27:1, 28:1};
+  var startDate = new Date(Date.UTC(2026, 6, 24));
+  var chart = document.getElementById('chart');
+  var maxCount = Math.max.apply(null, counts);
+  var bars = [];
+  counts.forEach(function(n, i){
+    var d = new Date(startDate.getTime() + i * 86400000);
+    var label = d.toLocaleDateString('en-US', {month:'short', day:'numeric', timeZone:'UTC'});
+    var b = document.createElement('div');
+    b.className = 'bar' + (marks[i] ? ' mark' : '');
+    b.setAttribute('tabindex','0');
+    b.innerHTML = '<span class="tip">' + label + ' — ' + n + (n === 1 ? ' release' : ' releases') + '</span>';
+    chart.appendChild(b);
+    bars.push({el:b, n:n});
+  });
+  function drawChart(){
+    bars.forEach(function(o, i){
+      setTimeout(function(){
+        o.el.style.height = Math.max(2, Math.round(o.n / maxCount * 100)) + '%';
+      }, i * 22);
+    });
+  }
+  if ('IntersectionObserver' in window) {
+    var cio = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting) { drawChart(); cio.disconnect(); }
+      });
+    }, {threshold:0.25});
+    cio.observe(chart);
+  } else { drawChart(); }
+})();
+</script>
+
+</body>
+</html>
