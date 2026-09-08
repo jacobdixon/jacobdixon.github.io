@@ -73,8 +73,8 @@ small,.fine{font-size:.86rem;color:var(--ink-3);line-height:1.55}
   padding:clamp(74px,13vh,130px) 0 0;position:relative;overflow:hidden;
 }
 #hero::after{
-  content:"";position:absolute;inset:auto -10% -40% -10%;height:60%;
-  background:radial-gradient(ellipse at 50% 0%,rgba(232,197,106,.09),transparent 70%);pointer-events:none;
+  content:"";position:absolute;inset:0;
+  background:radial-gradient(ellipse 90% 70% at 50% 112%,rgba(232,197,106,.11),transparent 68%);pointer-events:none;
 }
 #hero .wrap{position:relative;z-index:2}
 .eyebrow{font-family:var(--mono);font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--brass-lt);opacity:.85}
@@ -169,7 +169,7 @@ small,.fine{font-size:.86rem;color:var(--ink-3);line-height:1.55}
 @media(max-width:620px){.dwrow{grid-template-columns:1fr;gap:4px 0}.dwrow dd{margin-bottom:12px}}
 
 /* ---------- cadence chart ---------- */
-.chartbox{margin:6px 0 0}
+.chartbox{margin:6px 0 0;overflow-x:clip}
 .chart{display:flex;align-items:flex-end;gap:2px;height:150px;padding:0;border-bottom:1px solid var(--rule)}
 .bar{flex:1;background:var(--felt);border-radius:2px 2px 0 0;height:0;transition:height .9s cubic-bezier(.22,1,.36,1);position:relative;min-height:2px}
 .bar.mark{background:var(--brass)}
@@ -180,6 +180,8 @@ small,.fine{font-size:.86rem;color:var(--ink-3);line-height:1.55}
   white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s;z-index:5;font-family:var(--mono);
 }
 .bar:hover .tip,.bar:focus-visible .tip{opacity:1}
+.bar.tl .tip{left:0;transform:none}
+.bar.tr .tip{left:auto;right:0;transform:none}
 .axis{display:flex;justify-content:space-between;font-family:var(--mono);font-size:.68rem;color:var(--ink-3);margin-top:9px;letter-spacing:.06em}
 .legend{display:flex;gap:18px;flex-wrap:wrap;margin-top:16px;font-size:.78rem;color:var(--ink-3)}
 .legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
@@ -354,8 +356,8 @@ footer a{color:#a8bcb2}
 
     <div class="dw">
       <div class="dwtabs" role="tablist" aria-label="Two candidate thresholds">
-        <button role="tab" aria-selected="true" data-p="a">Bar at 18 — what the measurement said</button>
-        <button role="tab" aria-selected="false" data-p="b">Bar at 17 — what shipped</button>
+        <button role="tab" aria-selected="true" data-p="a">Bar at 18 · the measurement</button>
+        <button role="tab" aria-selected="false" data-p="b">Bar at 17 · what shipped</button>
       </div>
 
       <dl class="dwrow" id="pa">
@@ -449,7 +451,7 @@ footer a{color:#a8bcb2}
   <div class="wrap rv">
     <p class="kicker">06 — The operating system</p>
     <h2>What the process actually is</h2>
-    <p class="dek">Two agents work this repo — one owning the roadmap and the board, one owning the code. Everything below exists because that only works if the contract is explicit.</p>
+    <p class="dek">Two AI agents work this repo under a written boundary — one owns the roadmap and the board, one owns the code, and I own the decisions. Everything below exists because that only works if the contract is explicit.</p>
 
     <ol class="rules">
       <li><b>One fact, one home. Cite it; never restate it.</b><span>The test is simple: if this number changes, how many files must I edit? More than one is a defect, not a convenience. The project's own handoff doc refuses to restate the version number — because it once claimed v0.7.2 while the app shipped v0.22.0, and a stale number reads exactly like a fresh one.</span></li>
@@ -637,7 +639,8 @@ footer a{color:#a8bcb2}
     var d = new Date(startDate.getTime() + i * 86400000);
     var label = d.toLocaleDateString('en-US', {month:'short', day:'numeric', timeZone:'UTC'});
     var b = document.createElement('div');
-    b.className = 'bar' + (marks[i] ? ' mark' : '');
+    var edge = i < 4 ? ' tl' : (i > counts.length - 5 ? ' tr' : '');
+    b.className = 'bar' + (marks[i] ? ' mark' : '') + edge;
     b.setAttribute('tabindex','0');
     b.innerHTML = '<span class="tip">' + label + ' — ' + n + (n === 1 ? ' release' : ' releases') + '</span>';
     chart.appendChild(b);
